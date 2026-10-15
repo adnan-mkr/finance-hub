@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algeria Personal Finance Hub</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen pb-12">
+
+    <div class="max-w-4xl mx-auto px-4 py-6 sm:py-8">
+        <!-- App Header & Exchange Rate Controls -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6 gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Personal Finance Hub</h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Track EUR, DZD Cash, and Baridi digital balances</p>
+            </div>
+            <div class="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200 w-full sm:w-auto">
+                <label for="exchangeRate" class="text-xs font-semibold text-slate-600 whitespace-nowrap">1 EUR Rate (DZD):</label>
+                <input type="number" id="exchangeRate" value="250" step="0.5" onchange="updateExchangeRate()" 
+                    class="w-24 px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-right font-bold text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+            </div>
+        </header>
+
+        <!-- Timeline Navigation Bar (Sep 2026 - Sep 2027) -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <button onclick="changeMonthOffset(-1)" class="w-full sm:w-auto px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5">
+                <span>&larr;</span> Previous Month
+            </button>
+            
+            <div class="flex items-center gap-2.5 w-full sm:w-auto justify-center">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Period:</span>
+                <select id="monthSelector" onchange="switchMonth(this.value)" class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+
+            <button onclick="changeMonthOffset(1)" class="w-full sm:w-auto px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5">
+                Next Month <span>&rarr;</span>
+            </button>
+        </div>
+
+        <!-- Dashboard Global Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-6 rounded-2xl shadow-md">
+                <p class="text-xs uppercase tracking-wider text-blue-100 font-medium">Total Global Net Worth (DZD)</p>
+                <h2 id="totalDzd" class="text-3xl font-extrabold mt-1 tracking-tight">0.00 DZD</h2>
+                <div class="mt-4 flex items-center justify-between text-xs sm:text-sm text-blue-100 border-t border-blue-500/30 pt-3">
+                    <span>EUR Equivalent:</span>
+                    <span id="totalEurEquivalent" class="font-bold text-white text-base">€0.00</span>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                <div>
+                    <p class="text-xs uppercase tracking-wider text-slate-400 font-medium">Net Monthly Savings (<span id="activeMonthLabel" class="text-slate-600 font-semibold"></span>)</p>
+                    <h2 id="monthlySavings" class="text-3xl font-extrabold text-slate-900 mt-1 tracking-tight">0.00 DZD</h2>
+                </div>
+                <div class="text-xs text-slate-400 mt-4 pt-2 border-t border-slate-100">Calculated as Total Income minus Expenses logged in this active month.</div>
+            </div>
+        </div>
+
+        <!-- 4 Storage Account Balances -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-bold text-slate-900">Account Storage Balances</h3>
+                <span class="text-xs text-slate-400">Editable starting values</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80 hover:border-slate-300 transition-colors">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">1. Grey (EUR)</span>
+                    <div class="mt-1.5 flex items-center">
+                        <span class="text-slate-400 font-medium mr-1.5">€</span>
+                        <input type="number" id="bal_grey" value="0" step="0.01" onchange="updateBalances()" class="w-full bg-transparent font-bold text-lg text-slate-800 focus:outline-none">
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80 hover:border-slate-300 transition-colors">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">2. Paysera (EUR)</span>
+                    <div class="mt-1.5 flex items-center">
+                        <span class="text-slate-400 font-medium mr-1.5">€</span>
+                        <input type="number" id="bal_paysera" value="0" step="0.01" onchange="updateBalances()" class="w-full bg-transparent font-bold text-lg text-slate-800 focus:outline-none">
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80 hover:border-slate-300 transition-colors">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">3. Baridi (Digital DZD)</span>
+                    <div class="mt-1.5 flex items-center">
+                        <span class="text-slate-400 font-medium text-xs mr-1.5">DZD</span>
+                        <input type="number" id="bal_baridi" value="0" step="1" onchange="updateBalances()" class="w-full bg-transparent font-bold text-lg text-slate-800 focus:outline-none">
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80 hover:border-slate-300 transition-colors">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">4. Cash (Physical DZD)</span>
+                    <div class="mt-1.5 flex items-center">
+                        <span class="text-slate-400 font-medium text-xs mr-1.5">DZD</span>
+                        <input type="number" id="bal_cash" value="0" step="1" onchange="updateBalances()" class="w-full bg-transparent font-bold text-lg text-slate-800 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Transaction Form -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
+            <h3 class="text-base font-bold text-slate-900 mb-4">Log Income or Expense</h3>
+            <form id="txForm" onsubmit="addTransaction(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+                <select id="txType" class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="expense">Expense (-)</option>
+                    <option value="income">Income / Salary (+)</option>
+                </select>
+                <input type="text" id="txTitle" placeholder="Title (e.g. Salary, Rent)" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="number" id="txAmount" placeholder="Amount" step="0.01" min="0.01" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select id="txCurrency" class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="DZD">DZD</option>
+                    <option value="EUR">EUR (€)</option>
+                </select>
+                <select id="txAccount" class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="grey">Grey (EUR)</option>
+                    <option value="paysera">Paysera (EUR)</option>
+                    <option value="baridi">Baridi (Digital DZD)</option>
+                    <option value="cash">Cash DZD</option>
+                </select>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors shadow-sm">
+                    Add Entry
+                </button>
+            </form>
+        </div>
+
+        <!-- Transaction History Table -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+            <h3 class="text-base font-bold text-slate-900 mb-4">Transaction Logs (<span id="tableMonthLabel" class="text-blue-600"></span>)</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                            <th class="py-3 px-4">Date</th>
+                            <th class="py-3 px-4">Title</th>
+                            <th class="py-3 px-4">Target Account</th>
+                            <th class="py-3 px-4">Type</th>
+                            <th class="py-3 px-4 text-right">Amount</th>
+                            <th class="py-3 px-4 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="txTableBody" class="divide-y divide-slate-100 text-sm">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application JavaScript Logic -->
+    <script>
+        // Timeline sequence from Sep 2026 through Sep 2027
+        const timelineMonths = [
+            "September 2026", "October 2026", "November 2026", "December 2026",
+            "January 2027", "February 2027", "March 2027", "April 2027",
+            "May 2027", "June 2027", "July 2027", "August 2027", "September 2027"
+        ];
+
+        let db = {
+            rate: 250,
+            activeMonth: "September 2026",
+            months: {}
+        };
+
+        // Initialize state and populate timeline
+        function initApp() {
+            const saved = localStorage.getItem('dz_finance_v2_data');
+            if (saved) {
+                try {
+                    db = JSON.parse(saved);
+                } catch(e) {
+                    console.error("Failed to parse saved state", e);
+                }
+            }
+
+            // Ensure all 13 months exist in memory structure
+            timelineMonths.forEach((mKey, index) => {
+                if (!db.months[mKey]) {
+                    let baseBalances = { grey: 0, paysera: 0, baridi: 0, cash: 0 };
+                    // Carry over from previous month if available
+                    if (index > 0) {
+                        const prevKey = timelineMonths[index - 1];
+                        if (db.months[prevKey]) {
+                            baseBalances = JSON.parse(JSON.stringify(db.months[prevKey].balances));
+                        }
+                    }
+                    db.months[mKey] = {
+                        balances: baseBalances,
+                        transactions: []
+                    };
+                }
+            });
+
+            if (!db.months[db.activeMonth]) {
+                db.activeMonth = "September 2026";
+            }
+
+            document.getElementById('exchangeRate').value = db.rate || 250;
+            populateMonthDropdown();
+            loadActiveMonthData();
+        }
+
+        function saveDb() {
+            localStorage.setItem('dz_finance_v2_data', JSON.stringify(db));
+        }
+
+        function populateMonthDropdown() {
+            const select = document.getElementById('monthSelector');
+            select.innerHTML = '';
+            timelineMonths.forEach(monthKey => {
+                const opt = document.createElement('option');
+                opt.value = monthKey;
+                opt.innerText = monthKey;
+                if (monthKey === db.activeMonth) opt.selected = true;
+                select.appendChild(opt);
+            });
+            document.getElementById('activeMonthLabel').innerText = db.activeMonth;
+            document.getElementById('tableMonthLabel').innerText = db.activeMonth;
+        }
+
+        function switchMonth(monthName) {
+            db.activeMonth = monthName;
+            saveDb();
+            populateMonthDropdown();
+            loadActiveMonthData();
+        }
+
+        function changeMonthOffset(direction) {
+            const currentIndex = timelineMonths.indexOf(db.activeMonth);
+            const newIndex = currentIndex + direction;
+            if (newIndex >= 0 && newIndex < timelineMonths.length) {
+                switchMonth(timelineMonths[newIndex]);
+            }
+        }
+
+        function loadActiveMonthData() {
+            const currentData = db.months[db.activeMonth];
+            document.getElementById('bal_grey').value = currentData.balances.grey;
+            document.getElementById('bal_paysera').value = currentData.balances.paysera;
+            document.getElementById('bal_baridi').value = currentData.balances.baridi;
+            document.getElementById('bal_cash').value = currentData.balances.cash;
+
+            renderTransactions();
+            calculateTotals();
+        }
+
+        function updateExchangeRate() {
+            db.rate = parseFloat(document.getElementById('exchangeRate').value) || 250;
+            saveDb();
+            calculateTotals();
+        }
+
+        function updateBalances() {
+            const currentData = db.months[db.activeMonth];
+            currentData.balances.grey = parseFloat(document.getElementById('bal_grey').value) || 0;
+            currentData.balances.paysera = parseFloat(document.getElementById('bal_paysera').value) || 0;
+            currentData.balances.baridi = parseFloat(document.getElementById('bal_baridi').value) || 0;
+            currentData.balances.cash = parseFloat(document.getElementById('bal_cash').value) || 0;
+            
+            saveDb();
+            calculateTotals();
+        }
+
+        function addTransaction(e) {
+            e.preventDefault();
+            const type = document.getElementById('txType').value;
+            const title = document.getElementById('txTitle').value.trim();
+            const amount = parseFloat(document.getElementById('txAmount').value);
+            const currency = document.getElementById('txCurrency').value;
+            const account = document.getElementById('txAccount').value;
+
+            if (!title || isNaN(amount) || amount <= 0) return;
+
+            const newTx = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('en-GB'),
+                type, title, amount, currency, account
+            };
+
+            const currentData = db.months[db.activeMonth];
+            currentData.transactions.unshift(newTx);
+
+            // Auto update target account balance
+            const multiplier = type === 'income' ? 1 : -1;
+            currentData.balances[account] += amount * multiplier;
+            document.getElementById(`bal_${account}`).value = currentData.balances[account];
+
+            saveDb();
+            renderTransactions();
+            calculateTotals();
+            document.getElementById('txForm').reset();
+        }
+
+        function deleteTx(id) {
+            const currentData = db.months[db.activeMonth];
+            const index = currentData.transactions.findIndex(t => t.id === id);
+            if (index !== -1) {
+                const tx = currentData.transactions[index];
+                // Reverse transaction impact on account
+                const multiplier = tx.type === 'income' ? -1 : 1; 
+                currentData.balances[tx.account] += tx.amount * multiplier;
+                document.getElementById(`bal_${tx.account}`).value = currentData.balances[tx.account];
+
+                currentData.transactions.splice(index, 1);
+                saveDb();
+                renderTransactions();
+                calculateTotals();
+            }
+        }
+
+        function calculateTotals() {
+            const rate = db.rate;
+            const currentData = db.months[db.activeMonth];
+            
+            let totalEur = currentData.balances.grey + currentData.balances.paysera;
+            let totalDzdDigital = currentData.balances.baridi + currentData.balances.cash;
+            let totalDzdGlobal = (totalEur * rate) + totalDzdDigital;
+
+            // Calculate active month's total net savings
+            let monthlyDiff = 0;
+            currentData.transactions.forEach(t => {
+                let valInDzd = t.currency === 'EUR' ? t.amount * rate : t.amount;
+                if (t.type === 'income') monthlyDiff += valInDzd;
+                else monthlyDiff -= valInDzd;
+            });
+
+            document.getElementById('totalDzd').innerText = totalDzdGlobal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' DZD';
+            document.getElementById('totalEurEquivalent').innerText = '€' + (totalDzdGlobal / rate).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            
+            const savingsEl = document.getElementById('monthlySavings');
+            savingsEl.innerText = monthlyDiff.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' DZD';
+            savingsEl.className = `text-3xl font-extrabold mt-1 tracking-tight ${monthlyDiff >= 0 ? 'text-emerald-600' : 'text-rose-600'}`;
+        }
+
+        function renderTransactions() {
+            const currentData = db.months[db.activeMonth];
+            const tbody = document.getElementById('txTableBody');
+            tbody.innerHTML = '';
+            
+            if (!currentData || currentData.transactions.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400 text-xs">No transactions recorded for ${db.activeMonth}.</td></tr>`;
+                return;
+            }
+
+            const accountMap = { grey: 'Grey (EUR)', paysera: 'Paysera (EUR)', baridi: 'Baridi (DZD)', cash: 'Cash (DZD)' };
+
+            currentData.transactions.forEach(tx => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-slate-500 text-xs font-mono">${tx.date}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-800">${tx.title}</td>
+                    <td class="py-3 px-4 text-slate-600 text-xs">${accountMap[tx.account] || tx.account}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full ${tx.type === 'income' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200/60' : 'bg-rose-50 text-rose-600 border border-rose-200/60'}">
+                            ${tx.type === 'income' ? 'Income' : 'Expense'}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-right font-bold ${tx.type === 'income' ? 'text-emerald-600' : 'text-slate-800'}">
+                        ${tx.type === 'income' ? '+' : '-'}${tx.amount.toLocaleString('en-US', {minimumFractionDigits: tx.currency === 'EUR' ? 2 : 0})} ${tx.currency}
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="deleteTx(${tx.id})" class="text-slate-400 hover:text-rose-600 text-xs font-semibold px-2 py-1 rounded hover:bg-rose-50 transition-colors">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Run application on window load
+        window.onload = function() {
+            initApp();
+        };
+    </script>
+</body>
+</html>
