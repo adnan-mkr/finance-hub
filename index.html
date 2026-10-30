@@ -3,440 +3,472 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algerian Personal Finance Hub</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Executive Budget & Multi-Currency Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: #0f172a; 
+            color: #f8fafc;
+        }
+
+        /* Glassmorphic Cards */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Sleek Inputs */
+        .input-sleek {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f1f5f9;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .input-sleek:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen pb-12">
+<body class="min-h-screen pb-20 selection:bg-sky-500 selection:text-white">
 
-    <div class="max-w-4xl mx-auto px-4 py-6">
-        
-        <!-- Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-800/80 backdrop-blur p-5 rounded-2xl border border-slate-700/60 shadow-lg mb-6 gap-4">
-            <div>
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">🇩🇿</span>
-                    <h1 class="text-xl font-bold text-white tracking-tight">Personal Finance Hub</h1>
+    <!-- Top Executive Header -->
+    <header class="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3.5">
+                <div class="h-11 w-11 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-sky-500/20">
+                    <i class="fa-solid fa-chart-line text-white text-lg"></i>
                 </div>
-                <p class="text-xs text-slate-400 mt-0.5">Multi-currency tracker (EUR & DZD)</p>
-            </div>
-
-            <!-- Month Exchange Rate Control -->
-            <div class="flex items-center gap-3 bg-slate-900/90 px-3.5 py-2 rounded-xl border border-blue-500/30 w-full sm:w-auto">
-                <div class="flex flex-col">
-                    <span class="text-[10px] uppercase font-bold tracking-wider text-blue-400">Month Rate</span>
-                    <span class="text-[11px] text-slate-400">1 EUR =</span>
-                </div>
-                <div class="flex items-center gap-1.5 ml-auto sm:ml-0">
-                    <input type="number" id="exchangeRate" value="275" step="0.5" onchange="updateMonthExchangeRate()" 
-                        class="w-20 px-2 py-1 bg-slate-800 border border-slate-600 rounded-lg text-right font-bold text-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
-                    <span class="text-xs font-semibold text-slate-300">DZD</span>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                        Financial Hub
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium flex items-center gap-2">
+                        <span>Multi-Currency Dashboard</span>
+                        <span class="inline-block w-1 h-1 rounded-full bg-slate-600"></span>
+                        <span class="text-sky-400 font-semibold">EUR / DZD Tracker</span>
+                    </p>
                 </div>
             </div>
-        </header>
 
-        <!-- Month Navigation Bar -->
-        <div class="bg-slate-800/80 backdrop-blur p-3.5 rounded-2xl border border-slate-700/60 shadow-md mb-6 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <button onclick="changeMonthOffset(-1)" class="w-full sm:w-auto px-4 py-2 bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95">
-                <span>&larr;</span> Prev Month
-            </button>
-            
-            <div class="flex items-center gap-2 w-full sm:w-auto justify-center">
-                <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Period:</span>
-                <select id="monthSelector" onchange="switchMonth(this.value)" class="bg-slate-900 border border-slate-600 rounded-xl px-3 py-1.5 text-sm font-bold text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <!-- Dynamic Month Options -->
-                </select>
+            <!-- Header Quick Action Bar -->
+            <div class="flex items-center gap-2.5">
+                <button onclick="exportData()" class="text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/80 px-3.5 py-2 rounded-xl transition duration-150 flex items-center gap-2 shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-arrow-down-tray text-sky-400"></i> Export
+                </button>
+                <label class="text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/80 px-3.5 py-2 rounded-xl transition duration-150 flex items-center gap-2 shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-arrow-up-tray text-emerald-400"></i> Import
+                    <input type="file" id="importFile" accept=".json" onchange="importData(event)" class="hidden">
+                </label>
+                <div class="h-6 w-px bg-slate-800 mx-1"></div>
+                <button onclick="resetAllData()" class="text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 px-3.5 py-2 rounded-xl transition duration-150 flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-rotate-right"></i> Reset
+                </button>
             </div>
-
-            <button onclick="changeMonthOffset(1)" class="w-full sm:w-auto px-4 py-2 bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95">
-                Next Month <span>&rarr;</span>
-            </button>
         </div>
+    </header>
 
-        <!-- Prioritized Top Dashboard Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            
-            <!-- Metric 1 (Primary / Large): Spendings This Month -->
-            <div class="bg-gradient-to-br from-rose-950/60 to-slate-800 border border-rose-500/30 p-5 rounded-2xl shadow-lg relative overflow-hidden">
-                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-500/10 rounded-full blur-2xl"></div>
-                <div class="flex justify-between items-start">
-                    <span class="text-xs font-bold uppercase tracking-wider text-rose-400">1. Spending This Month</span>
-                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 font-medium" id="spendingMonthTag">Active Month</span>
-                </div>
-                <h2 id="metricSpendings" class="text-3xl font-black text-white mt-2 tracking-tight">0.00 <span class="text-lg font-bold text-rose-400">DZD</span></h2>
-                <p class="text-xs text-slate-400 mt-2">Total expenses logged in <span class="text-slate-200 font-medium activeMonthText"></span></p>
-            </div>
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-8 pt-8 space-y-8">
 
-            <!-- Metric 2 (Primary / Large): Current Cash Balance (PHYSICAL CASH ONLY) -->
-            <div class="bg-gradient-to-br from-emerald-950/60 to-slate-800 border border-emerald-500/30 p-5 rounded-2xl shadow-lg relative overflow-hidden">
-                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl"></div>
-                <div class="flex justify-between items-start">
-                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">2. Current Cash Balance</span>
-                    <span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-medium">Physical Cash Only</span>
-                </div>
-                <h2 id="metricCashBalance" class="text-3xl font-black text-white mt-2 tracking-tight">0.00 <span class="text-lg font-bold text-emerald-400">DZD</span></h2>
-                <div class="flex items-center gap-2 text-[11px] text-slate-400 mt-2 font-medium">
-                    <span>Physical Cash DZD wallet</span>
-                    <span class="text-slate-600">•</span>
-                    <span class="text-slate-500 text-[10px] italic">Baridi digital: <span id="subBaridi" class="text-slate-400 not-italic">0 DZD</span></span>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Metric 3 (Secondary / Smaller font): Total Net Worth -->
-        <div class="bg-slate-800/60 border border-slate-700/80 p-4 rounded-2xl shadow-sm mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-                <div class="flex items-center gap-2">
-                    <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">3. Total Net Worth (Global)</span>
-                    <span class="text-[9px] px-1.5 py-0.5 bg-slate-700 text-slate-300 rounded font-normal">All 4 Accounts</span>
-                </div>
-                <div class="text-xl font-bold text-white mt-0.5" id="metricNetWorthDzd">0.00 DZD</div>
-            </div>
-            <div class="sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-700">
-                <span class="text-[10px] uppercase font-medium text-slate-400">Converted EUR Equivalent</span>
-                <div class="text-base font-semibold text-blue-400" id="metricNetWorthEur">€0.00</div>
+        <!-- Custom Month Tabs (Sep, Oct, Nov, Dec) -->
+        <div class="flex justify-between items-center border-b border-slate-800/80 pb-4">
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="monthTabs"></div>
+            <div class="hidden sm:flex items-center gap-2 text-xs font-medium text-slate-400 bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Dynamic Rollover Active
             </div>
         </div>
 
-        <!-- 4 Storage Accounts Grid -->
-        <div class="bg-slate-800/80 backdrop-blur p-5 rounded-2xl border border-slate-700/60 shadow-md mb-6">
-            <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider mb-3.5 flex items-center gap-2">
-                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                Storage Accounts & Balances
-            </h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-                
-                <!-- Grey (EUR) -->
-                <div class="p-3.5 bg-slate-900/80 rounded-xl border border-slate-700/80 hover:border-slate-600 transition-all">
-                    <span class="text-[10px] font-bold text-blue-400 uppercase tracking-wider">1. Grey (EUR Bank)</span>
-                    <div class="mt-1.5 flex items-center">
-                        <span class="text-slate-400 font-medium text-sm mr-1">€</span>
-                        <input type="number" id="bal_grey" value="0" step="0.01" onchange="updateAccountBalances()" class="w-full bg-transparent font-bold text-base text-white focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-1">
-                    </div>
-                </div>
+        <!-- Dynamic Month Dashboard View -->
+        <div id="monthDashboard" class="space-y-8"></div>
 
-                <!-- Paysera (EUR) -->
-                <div class="p-3.5 bg-slate-900/80 rounded-xl border border-slate-700/80 hover:border-slate-600 transition-all">
-                    <span class="text-[10px] font-bold text-blue-400 uppercase tracking-wider">2. Paysera (EUR Bank)</span>
-                    <div class="mt-1.5 flex items-center">
-                        <span class="text-slate-400 font-medium text-sm mr-1">€</span>
-                        <input type="number" id="bal_paysera" value="0" step="0.01" onchange="updateAccountBalances()" class="w-full bg-transparent font-bold text-base text-white focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-1">
-                    </div>
-                </div>
-
-                <!-- Baridi (Digital DZD - Subtle Tag) -->
-                <div class="p-3.5 bg-slate-900/80 rounded-xl border border-slate-700/80 hover:border-slate-600 transition-all opacity-85 hover:opacity-100">
-                    <div class="flex justify-between items-center">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">3. Baridi (Postal)</span>
-                        <span class="text-[9px] px-1 bg-slate-800 text-slate-400 rounded">Digital</span>
-                    </div>
-                    <div class="mt-1.5 flex items-center">
-                        <span class="text-slate-400 font-medium text-xs mr-1">DZD</span>
-                        <input type="number" id="bal_baridi" value="0" step="1" onchange="updateAccountBalances()" class="w-full bg-transparent font-bold text-base text-slate-200 focus:outline-none focus:ring-1 focus:ring-slate-500 rounded px-1">
-                    </div>
-                </div>
-
-                <!-- Cash DZD -->
-                <div class="p-3.5 bg-slate-900/80 rounded-xl border border-emerald-500/40 hover:border-emerald-500/70 transition-all">
-                    <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">4. Cash (Physical DZD)</span>
-                    <div class="mt-1.5 flex items-center">
-                        <span class="text-slate-400 font-medium text-xs mr-1">DZD</span>
-                        <input type="number" id="bal_cash" value="0" step="1" onchange="updateAccountBalances()" class="w-full bg-transparent font-bold text-base text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 rounded px-1">
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Add Transaction Form -->
-        <div class="bg-slate-800/80 backdrop-blur p-5 rounded-2xl border border-slate-700/60 shadow-md mb-6">
-            <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider mb-3.5 flex items-center gap-2">
-                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                Add Transaction
-            </h3>
-            <form id="txForm" onsubmit="addTransaction(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-                <select id="txType" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="expense">Expense (-)</option>
-                    <option value="income">Income / Salary (+)</option>
-                </select>
-                <input type="text" id="txTitle" placeholder="Title (e.g. Salary, Coffee)" required class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="number" id="txAmount" placeholder="Amount" step="0.01" required class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <select id="txCurrency" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="DZD">DZD</option>
-                    <option value="EUR">EUR (€)</option>
-                </select>
-                <select id="txAccount" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="cash">Cash DZD (Physical)</option>
-                    <option value="baridi">Baridi (Digital DZD)</option>
-                    <option value="grey">Grey (EUR)</option>
-                    <option value="paysera">Paysera (EUR)</option>
-                </select>
-                <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-xl text-xs transition-colors shadow-md active:scale-95">Add Entry</button>
-            </form>
-        </div>
-
-        <!-- Transaction History Table -->
-        <div class="bg-slate-800/80 backdrop-blur p-5 rounded-2xl border border-slate-700/60 shadow-md">
-            <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider mb-3.5">
-                Transactions (<span class="activeMonthText text-blue-400"></span>)
-            </h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-slate-700/80 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                            <th class="py-2.5 px-3">Date</th>
-                            <th class="py-2.5 px-3">Title</th>
-                            <th class="py-2.5 px-3">Account</th>
-                            <th class="py-2.5 px-3">Type</th>
-                            <th class="py-2.5 px-3 text-right">Amount</th>
-                            <th class="py-2.5 px-3 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="txTableBody" class="divide-y divide-slate-700/50 text-xs">
-                        <!-- Dynamic Rows -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </div>
+    </main>
 
     <script>
-        // Full timeline running from September 2026 to September 2027
-        const timelineMonths = [
-            "September 2026", "October 2026", "November 2026", "December 2026",
-            "January 2027", "February 2027", "March 2027", "April 2027",
-            "May 2027", "June 2027", "July 2027", "August 2027", "September 2027"
+        // Updated month sequence: Sep, Oct, Nov, Dec
+        const MONTHS_CONFIG = [
+            { id: 1, name: "September", short: "SEP" },
+            { id: 2, name: "October", short: "OCT" },
+            { id: 3, name: "November", short: "NOV" },
+            { id: 4, name: "December", short: "DEC" }
         ];
 
-        let db = {
-            activeMonth: "September 2026",
-            months: {}
+        const DEFAULT_DATA = {
+            activeMonthId: 1,
+            months: {
+                1: { salaryIncome: 850, exchangeRate: 277, euroBills: [{ name: "Firefly", dueDate: "1/6/2026", amount: 18 }, { name: "Spotify", dueDate: "1/22/2026", amount: 11 }], dzdExpenses: [{ name: "Phone Bill", amount: 10000 }, { name: "Food Budget", amount: 20000 }, { name: "Allowed Spending", amount: 17500 }], convertToDZD: 0, greyPortion: 100, payseraPortion: 50, initialGrey: 100, initialPaysera: 50, initialCCP: 15000, initialCash: 5000 },
+                2: { salaryIncome: 850, exchangeRate: 277, euroBills: [{ name: "Firefly", dueDate: "1/6/2026", amount: 18 }, { name: "Spotify", dueDate: "1/22/2026", amount: 11 }], dzdExpenses: [{ name: "Phone Bill", amount: 10000 }, { name: "Food Budget", amount: 20000 }, { name: "Allowed Spending", amount: 17500 }], convertToDZD: 0, greyPortion: 100, payseraPortion: 50 },
+                3: { salaryIncome: 850, exchangeRate: 277, euroBills: [{ name: "Firefly", dueDate: "1/6/2026", amount: 18 }, { name: "Spotify", dueDate: "1/22/2026", amount: 11 }], dzdExpenses: [{ name: "Phone Bill", amount: 10000 }, { name: "Food Budget", amount: 20000 }, { name: "Allowed Spending", amount: 17500 }], convertToDZD: 0, greyPortion: 100, payseraPortion: 50 },
+                4: { salaryIncome: 850, exchangeRate: 277, euroBills: [{ name: "Firefly", dueDate: "1/6/2026", amount: 18 }, { name: "Spotify", dueDate: "1/22/2026", amount: 11 }], dzdExpenses: [{ name: "Phone Bill", amount: 10000 }, { name: "Food Budget", amount: 20000 }, { name: "Allowed Spending", amount: 17500 }], convertToDZD: 0, greyPortion: 100, payseraPortion: 50 }
+            }
         };
 
-        function initApp() {
-            const saved = localStorage.getItem('dz_dzd_eur_finance_hub_v2');
-            if (saved) {
-                db = JSON.parse(saved);
-            }
+        let appState = JSON.parse(localStorage.getItem('executive_budget_app_state')) || DEFAULT_DATA;
 
-            // Initialize all months with default 275 DZD rate
-            timelineMonths.forEach((mKey, index) => {
-                if (!db.months[mKey]) {
-                    let carriedBalances = { grey: 0, paysera: 0, baridi: 0, cash: 0 };
-                    if (index > 0) {
-                        const prevKey = timelineMonths[index - 1];
-                        if (db.months[prevKey]) {
-                            carriedBalances = JSON.parse(JSON.stringify(db.months[prevKey].balances));
-                        }
+        function saveState() {
+            localStorage.setItem('executive_budget_app_state', JSON.stringify(appState));
+            renderApp();
+        }
+
+        function resetAllData() {
+            if(confirm("Are you sure you want to reset all financial data back to factory defaults?")) {
+                appState = JSON.parse(JSON.stringify(DEFAULT_DATA));
+                saveState();
+            }
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `budget_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(event) {
+            const fileReader = new FileReader();
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0], "UTF-8");
+                fileReader.onload = (e) => {
+                    try {
+                        appState = JSON.parse(e.target.result);
+                        saveState();
+                    } catch (error) {
+                        alert("Invalid JSON data backup structure.");
                     }
-                    db.months[mKey] = {
-                        rate: 275, // Default exchange rate
-                        balances: carriedBalances,
-                        transactions: []
-                    };
+                };
+            }
+        }
+
+        // Mathematical Formula Engine across Sep -> Oct -> Nov -> Dec
+        function computeFinancials() {
+            const computed = {};
+            let prevGrey = appState.months[1].initialGrey || 100;
+            let prevPaysera = appState.months[1].initialPaysera || 50;
+            let prevCCP = appState.months[1].initialCCP || 15000;
+            let prevCash = appState.months[1].initialCash || 5000;
+
+            MONTHS_CONFIG.forEach((mConf, index) => {
+                const data = appState.months[mConf.id];
+                
+                if (index > 0) {
+                    const prevComp = computed[MONTHS_CONFIG[index-1].id];
+                    prevGrey = prevComp.nextGrey;
+                    prevPaysera = prevComp.nextPaysera;
+                    prevCCP = prevComp.cashLeftDZD;
+                    prevCash = 0;
                 }
+
+                // Euro Calculations
+                let totalEuroExpenses = 0;
+                (data.euroBills || []).forEach(b => totalEuroExpenses += Number(b.amount) || 0);
+
+                const currentBalanceEuro = (Number(data.salaryIncome) + prevGrey + prevPaysera) - totalEuroExpenses - (Number(data.convertToDZD) || 0);
+                
+                const greyP = Math.max(0.001, Number(data.greyPortion) || 100);
+                const payP = Math.max(0.001, Number(data.payseraPortion) || 50);
+                const nextGrey = currentBalanceEuro * (greyP / (greyP + payP));
+                const nextPaysera = currentBalanceEuro * (payP / (greyP + payP));
+
+                // DZD Calculations
+                const cashBalanceDZD = (Number(data.convertToDZD) || 0) * Number(data.exchangeRate);
+                
+                let totalDZDExpenses = 0;
+                (data.dzdExpenses || []).forEach(e => totalDZDExpenses += Number(e.amount) || 0);
+
+                const dzdExpensesEuroEquiv = totalDZDExpenses / (Number(data.exchangeRate) || 1);
+                const cashLeftDZD = (cashBalanceDZD + prevCCP + prevCash) - totalDZDExpenses;
+
+                computed[mConf.id] = {
+                    prevGrey, prevPaysera, prevCCP, prevCash,
+                    totalEuroExpenses, currentBalanceEuro,
+                    nextGrey, nextPaysera,
+                    cashBalanceDZD, totalDZDExpenses,
+                    dzdExpensesEuroEquiv, cashLeftDZD
+                };
             });
-
-            if (!db.months[db.activeMonth]) {
-                db.activeMonth = "September 2026";
-            }
-
-            populateMonthDropdown();
-            loadActiveMonthData();
+            return computed;
         }
 
-        function saveDb() {
-            localStorage.setItem('dz_dzd_eur_finance_hub_v2', JSON.stringify(db));
+        function renderApp() {
+            renderTabs();
+            renderDashboard();
         }
 
-        function populateMonthDropdown() {
-            const select = document.getElementById('monthSelector');
-            select.innerHTML = '';
-            timelineMonths.forEach(monthKey => {
-                const opt = document.createElement('option');
-                opt.value = monthKey;
-                opt.innerText = monthKey;
-                if (monthKey === db.activeMonth) opt.selected = true;
-                select.appendChild(opt);
-            });
+        function renderTabs() {
+            const container = document.getElementById('monthTabs');
+            container.innerHTML = '';
 
-            document.querySelectorAll('.activeMonthText').forEach(el => {
-                el.innerText = db.activeMonth;
-            });
-            document.getElementById('spendingMonthTag').innerText = db.activeMonth;
-        }
-
-        function switchMonth(monthName) {
-            db.activeMonth = monthName;
-            saveDb();
-            populateMonthDropdown();
-            loadActiveMonthData();
-        }
-
-        function changeMonthOffset(direction) {
-            const currentIndex = timelineMonths.indexOf(db.activeMonth);
-            const newIndex = currentIndex + direction;
-            if (newIndex >= 0 && newIndex < timelineMonths.length) {
-                switchMonth(timelineMonths[newIndex]);
-            }
-        }
-
-        function loadActiveMonthData() {
-            const currentData = db.months[db.activeMonth];
-            
-            // Set rate for active month
-            document.getElementById('exchangeRate').value = currentData.rate || 275;
-
-            // Load balances
-            document.getElementById('bal_grey').value = currentData.balances.grey;
-            document.getElementById('bal_paysera').value = currentData.balances.paysera;
-            document.getElementById('bal_baridi').value = currentData.balances.baridi;
-            document.getElementById('bal_cash').value = currentData.balances.cash;
-
-            renderTransactions();
-            calculateMetrics();
-        }
-
-        function updateMonthExchangeRate() {
-            const newRate = parseFloat(document.getElementById('exchangeRate').value) || 275;
-            db.months[db.activeMonth].rate = newRate;
-            saveDb();
-            calculateMetrics();
-        }
-
-        function updateAccountBalances() {
-            const currentData = db.months[db.activeMonth];
-            currentData.balances.grey = parseFloat(document.getElementById('bal_grey').value) || 0;
-            currentData.balances.paysera = parseFloat(document.getElementById('bal_paysera').value) || 0;
-            currentData.balances.baridi = parseFloat(document.getElementById('bal_baridi').value) || 0;
-            currentData.balances.cash = parseFloat(document.getElementById('bal_cash').value) || 0;
-
-            saveDb();
-            calculateMetrics();
-        }
-
-        function addTransaction(e) {
-            e.preventDefault();
-            const type = document.getElementById('txType').value;
-            const title = document.getElementById('txTitle').value;
-            const amount = parseFloat(document.getElementById('txAmount').value);
-            const currency = document.getElementById('txCurrency').value;
-            const account = document.getElementById('txAccount').value;
-
-            const newTx = {
-                id: Date.now(),
-                date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }),
-                type, title, amount, currency, account
-            };
-
-            const currentData = db.months[db.activeMonth];
-            currentData.transactions.unshift(newTx);
-
-            // Update balance automatically
-            const multiplier = type === 'income' ? 1 : -1;
-            currentData.balances[account] += amount * multiplier;
-            document.getElementById(`bal_${account}`).value = currentData.balances[account];
-
-            saveDb();
-            renderTransactions();
-            calculateMetrics();
-            document.getElementById('txForm').reset();
-        }
-
-        function deleteTx(id) {
-            const currentData = db.months[db.activeMonth];
-            const index = currentData.transactions.findIndex(t => t.id === id);
-            if (index !== -1) {
-                const tx = currentData.transactions[index];
-                const multiplier = tx.type === 'income' ? -1 : 1; 
-                currentData.balances[tx.account] += tx.amount * multiplier;
-                document.getElementById(`bal_${tx.account}`).value = currentData.balances[tx.account];
-
-                currentData.transactions.splice(index, 1);
-                saveDb();
-                renderTransactions();
-                calculateMetrics();
-            }
-        }
-
-        function calculateMetrics() {
-            const currentData = db.months[db.activeMonth];
-            const rate = currentData.rate || 275;
-
-            // 1. Primary Metric 1: Spending This Month (Total expenses in DZD for active month)
-            let totalSpendingsDzd = 0;
-            currentData.transactions.forEach(t => {
-                if (t.type === 'expense') {
-                    let valDzd = t.currency === 'EUR' ? t.amount * rate : t.amount;
-                    totalSpendingsDzd += valDzd;
-                }
-            });
-
-            // 2. Primary Metric 2: Current Cash Balance (STRICTLY PHYSICAL CASH ONLY)
-            const physicalCashDzd = currentData.balances.cash || 0;
-
-            // Subtle note reference for Baridi
-            const baridiVal = currentData.balances.baridi || 0;
-
-            // 3. Secondary Metric 3: Total Net Worth (Global - Grey + Paysera + Baridi + Cash)
-            const eurTotal = (currentData.balances.grey || 0) + (currentData.balances.paysera || 0);
-            const totalNetWorthDzd = (eurTotal * rate) + baridiVal + physicalCashDzd;
-            const totalNetWorthEur = rate > 0 ? (totalNetWorthDzd / rate) : 0;
-
-            // Render Metrics
-            document.getElementById('metricSpendings').innerHTML = `${totalSpendingsDzd.toLocaleString('en-US', {maximumFractionDigits: 2})} <span class="text-lg font-bold text-rose-400">DZD</span>`;
-            
-            // Current Cash metric shows ONLY physical cash
-            document.getElementById('metricCashBalance').innerHTML = `${physicalCashDzd.toLocaleString('en-US', {maximumFractionDigits: 0})} <span class="text-lg font-bold text-emerald-400">DZD</span>`;
-            document.getElementById('subBaridi').innerText = `${baridiVal.toLocaleString('en-US')} DZD`;
-
-            // Secondary Metric
-            document.getElementById('metricNetWorthDzd').innerText = `${totalNetWorthDzd.toLocaleString('en-US', {maximumFractionDigits: 2})} DZD`;
-            document.getElementById('metricNetWorthEur').innerText = `€${totalNetWorthEur.toLocaleString('en-US', {maximumFractionDigits: 2})}`;
-        }
-
-        function renderTransactions() {
-            const currentData = db.months[db.activeMonth];
-            const tbody = document.getElementById('txTableBody');
-            tbody.innerHTML = '';
-            
-            if (!currentData || currentData.transactions.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-500 text-xs">No transactions logged for ${db.activeMonth}.</td></tr>`;
-                return;
-            }
-
-            currentData.transactions.forEach(tx => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-700/40 transition-colors";
-                tr.innerHTML = `
-                    <td class="py-2.5 px-3 text-slate-400 font-mono text-[11px]">${tx.date}</td>
-                    <td class="py-2.5 px-3 font-medium text-slate-100">${tx.title}</td>
-                    <td class="py-2.5 px-3 text-slate-300 capitalize">${tx.account}</td>
-                    <td class="py-2.5 px-3">
-                        <span class="px-2 py-0.5 text-[10px] font-semibold rounded-md ${tx.type === 'income' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'}">
-                            ${tx.type}
-                        </span>
-                    </td>
-                    <td class="py-2.5 px-3 text-right font-semibold ${tx.type === 'income' ? 'text-emerald-400' : 'text-slate-100'}">
-                        ${tx.type === 'income' ? '+' : '-'}${tx.amount.toLocaleString()} ${tx.currency}
-                    </td>
-                    <td class="py-2.5 px-3 text-center">
-                        <button onclick="deleteTx(${tx.id})" class="text-slate-500 hover:text-rose-400 text-xs font-medium transition-colors">Delete</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+            MONTHS_CONFIG.forEach(m => {
+                const isActive = appState.activeMonthId === m.id;
+                const btn = document.createElement('button');
+                btn.className = `px-5 py-2.5 rounded-2xl font-bold text-xs tracking-wider transition-all duration-200 cursor-pointer flex items-center gap-2.5 ${
+                    isActive 
+                    ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-lg shadow-sky-500/25 ring-1 ring-white/20' 
+                    : 'bg-slate-900/80 text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-slate-800'
+                }`;
+                btn.innerHTML = `<span>${m.name}</span><span class="text-[10px] opacity-60 font-semibold uppercase px-1.5 py-0.5 rounded-md bg-black/20">${m.short}</span>`;
+                btn.onclick = () => { appState.activeMonthId = m.id; renderApp(); };
+                container.appendChild(btn);
             });
         }
 
-        initApp();
+        function renderDashboard() {
+            const computed = computeFinancials();
+            const activeId = appState.activeMonthId;
+            const data = appState.months[activeId];
+            const comp = computed[activeId];
+            const container = document.getElementById('monthDashboard');
+
+            // Build Euro Bills Rows
+            let billsHtml = '';
+            (data.euroBills || []).forEach((b, idx) => {
+                billsHtml += `
+                    <div class="grid grid-cols-12 gap-3 items-center bg-slate-900/60 hover:bg-slate-900 border border-slate-800 p-2.5 rounded-xl transition duration-150">
+                        <input type="text" value="${b.name}" onchange="updateBill(${idx}, 'name', this.value)" class="col-span-5 input-sleek text-xs font-semibold rounded-lg px-2.5 py-2">
+                        <input type="text" value="${b.dueDate}" onchange="updateBill(${idx}, 'dueDate', this.value)" class="col-span-3 input-sleek text-[11px] text-slate-400 text-center rounded-lg px-2 py-2">
+                        <div class="col-span-3 flex items-center gap-1 bg-slate-950/80 border border-slate-800 px-2 py-1.5 rounded-lg">
+                            <span class="text-xs font-bold text-sky-400">€</span>
+                            <input type="number" value="${b.amount}" onchange="updateBill(${idx}, 'amount', this.value)" class="w-full bg-transparent text-right font-bold text-xs text-white focus:outline-none">
+                        </div>
+                        <button onclick="removeBill(${idx})" class="col-span-1 text-slate-500 hover:text-rose-400 text-center transition cursor-pointer"><i class="fa-solid fa-xmark text-xs"></i></button>
+                    </div>`;
+            });
+
+            // Build DZD Expenses Rows
+            let dzdExpHtml = '';
+            (data.dzdExpenses || []).forEach((e, idx) => {
+                dzdExpHtml += `
+                    <div class="grid grid-cols-12 gap-3 items-center bg-slate-900/60 hover:bg-slate-900 border border-slate-800 p-2.5 rounded-xl transition duration-150">
+                        <input type="text" value="${e.name}" onchange="updateDzdExp(${idx}, 'name', this.value)" class="col-span-7 input-sleek text-xs font-semibold rounded-lg px-2.5 py-2">
+                        <div class="col-span-4 flex items-center gap-1.5 bg-slate-950/80 border border-slate-800 px-2.5 py-1.5 rounded-lg">
+                            <input type="number" value="${e.amount}" onchange="updateDzdExp(${idx}, 'amount', this.value)" class="w-full bg-transparent text-right font-bold text-xs text-emerald-400 focus:outline-none">
+                            <span class="text-[10px] font-bold text-slate-500">DZD</span>
+                        </div>
+                        <button onclick="removeDzdExp(${idx})" class="col-span-1 text-slate-500 hover:text-rose-400 text-center transition cursor-pointer"><i class="fa-solid fa-xmark text-xs"></i></button>
+                    </div>`;
+            });
+
+            container.innerHTML = `
+                <!-- Top Metric Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    
+                    <!-- Last Month Rollover Card -->
+                    <div class="glass-card p-5 rounded-3xl relative overflow-hidden flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Rollover Liquidity</span>
+                            <span class="text-xs bg-slate-800 text-slate-300 font-bold px-2 py-0.5 rounded-md border border-slate-700">Prior</span>
+                        </div>
+                        <div class="my-3 space-y-1.5">
+                            <div class="flex justify-between text-xs font-medium"><span class="text-slate-400">Grey Card</span><span class="text-sky-400 font-bold">€${comp.prevGrey.toFixed(2)}</span></div>
+                            <div class="flex justify-between text-xs font-medium"><span class="text-slate-400">Paysera</span><span class="text-violet-400 font-bold">€${comp.prevPaysera.toFixed(2)}</span></div>
+                            <div class="flex justify-between text-xs font-medium"><span class="text-slate-400">CCP Balance</span><span class="text-emerald-400 font-bold">${comp.prevCCP.toLocaleString()} DZD</span></div>
+                            <div class="flex justify-between text-xs font-medium"><span class="text-slate-400">Cash Balance</span><span class="text-amber-400 font-bold">${comp.prevCash.toLocaleString()} DZD</span></div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 italic">Automatically synced from prior month end</p>
+                    </div>
+
+                    <!-- Net Euro Balance Card -->
+                    <div class="glass-card p-5 rounded-3xl relative overflow-hidden flex flex-col justify-between border-l-4 border-l-sky-500">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Current Euro Balance</span>
+                            <i class="fa-solid fa-euro-sign text-sky-500/30 text-2xl"></i>
+                        </div>
+                        <div class="my-3">
+                            <div class="text-3xl font-black text-white tracking-tight">€ ${comp.currentBalanceEuro.toFixed(2)}</div>
+                            <span class="text-xs text-slate-400 mt-1 block">Income - Subscriptions - Conversions</span>
+                        </div>
+                        <div class="flex gap-2 text-[10px] font-semibold text-slate-400 border-t border-slate-800/80 pt-2">
+                            <span>Grey: <strong class="text-sky-300">€${comp.nextGrey.toFixed(2)}</strong></span>
+                            <span>•</span>
+                            <span>Paysera: <strong class="text-violet-300">€${comp.nextPaysera.toFixed(2)}</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- DZD Cash Balance Card -->
+                    <div class="glass-card p-5 rounded-3xl relative overflow-hidden flex flex-col justify-between border-l-4 border-l-emerald-500">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400">Converted Cash Pool</span>
+                            <i class="fa-solid fa-vault text-emerald-500/30 text-2xl"></i>
+                        </div>
+                        <div class="my-3">
+                            <div class="text-3xl font-black text-emerald-400 tracking-tight">${comp.cashBalanceDZD.toLocaleString()} <span class="text-xs font-normal text-slate-400">DZD</span></div>
+                            <span class="text-xs text-slate-400 mt-1 block">From € to DZD conversion</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400 border-t border-slate-800/80 pt-2 flex justify-between">
+                            <span>Market Rate</span>
+                            <span class="font-bold text-slate-200">${data.exchangeRate} DZD / 1€</span>
+                        </div>
+                    </div>
+
+                    <!-- Net DZD Cash Left Card -->
+                    <div class="glass-card p-5 rounded-3xl relative overflow-hidden flex flex-col justify-between border-l-4 border-l-amber-500">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-amber-400">Cash Left (Savings)</span>
+                            <i class="fa-solid fa-wallet text-amber-500/30 text-2xl"></i>
+                        </div>
+                        <div class="my-3">
+                            <div class="text-3xl font-black text-amber-400 tracking-tight">${comp.cashLeftDZD.toLocaleString()} <span class="text-xs font-normal text-slate-400">DZD</span></div>
+                            <span class="text-xs text-slate-400 mt-1 block">Pool + Prior DZD - Expenses</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400 border-t border-slate-800/80 pt-2 flex justify-between">
+                            <span>Expenses EUR Equiv</span>
+                            <span class="font-bold text-rose-400">${comp.dzdExpensesEuroEquiv.toFixed(2)} €</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Main Layout Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <!-- Left Section: EURO Pipeline -->
+                    <div class="space-y-6">
+                        
+                        <!-- Euro Parameters Panel -->
+                        <div class="glass-card p-6 rounded-3xl space-y-5">
+                            <div class="flex justify-between items-center border-b border-slate-800/80 pb-3">
+                                <h2 class="text-sm font-bold tracking-wider text-sky-400 uppercase flex items-center gap-2">
+                                    <i class="fa-solid fa-credit-card text-sky-400"></i> Euro Income & Conversion
+                                </h2>
+                                <span class="text-xs text-slate-500 font-mono">EUR Engine</span>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-xs font-semibold text-slate-300">Monthly Salary Income (€)</label>
+                                    <input type="number" value="${data.salaryIncome}" onchange="updateField('salaryIncome', this.value)" class="w-36 input-sleek font-bold text-right text-sm rounded-xl px-3 py-2">
+                                </div>
+
+                                <div class="flex justify-between items-center">
+                                    <label class="text-xs font-semibold text-sky-400">Euro's to Convert to DZD</label>
+                                    <input type="number" value="${data.convertToDZD}" onchange="updateField('convertToDZD', this.value)" class="w-36 input-sleek font-bold text-right text-sm rounded-xl px-3 py-2 text-emerald-400">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Euro Bills Panel -->
+                        <div class="glass-card p-6 rounded-3xl space-y-4">
+                            <div class="flex justify-between items-center border-b border-slate-800/80 pb-3">
+                                <h3 class="text-sm font-bold tracking-wider text-sky-400 uppercase flex items-center gap-2">
+                                    <i class="fa-solid fa-receipt text-sky-400"></i> Euro Subscriptions
+                                </h3>
+                                <button onclick="addBill()" class="text-xs font-semibold bg-sky-500/20 text-sky-300 hover:bg-sky-500/30 border border-sky-500/30 px-3 py-1.5 rounded-xl transition cursor-pointer">
+                                    + Add Bill
+                                </button>
+                            </div>
+                            <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                                ${billsHtml || '<p class="text-xs text-slate-500 italic text-center py-4">No Euro bills registered.</p>'}
+                            </div>
+                            <div class="flex justify-between items-center pt-3 border-t border-slate-800/80 text-xs font-bold">
+                                <span class="text-slate-400">Total Euro Bills Outflow</span>
+                                <span class="text-sky-400 text-sm">€ ${comp.totalEuroExpenses.toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Section: DZD Pipeline -->
+                    <div class="space-y-6">
+                        
+                        <!-- DZD Parameters Panel -->
+                        <div class="glass-card p-6 rounded-3xl space-y-5">
+                            <div class="flex justify-between items-center border-b border-slate-800/80 pb-3">
+                                <h2 class="text-sm font-bold tracking-wider text-emerald-400 uppercase flex items-center gap-2">
+                                    <i class="fa-solid fa-coins text-emerald-400"></i> DZD Market & Charges
+                                </h2>
+                                <span class="text-xs text-slate-500 font-mono">DZD Engine</span>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-xs font-semibold text-slate-300">Euro to DZD Exchange Rate</label>
+                                    <input type="number" value="${data.exchangeRate}" onchange="updateField('exchangeRate', this.value)" class="w-36 input-sleek font-bold text-right text-sm rounded-xl px-3 py-2 text-emerald-400">
+                                </div>
+
+                                <div class="flex justify-between items-center pt-2 border-t border-slate-800/80">
+                                    <span class="text-xs font-semibold text-slate-400">Total DZD Expenses</span>
+                                    <div class="text-right">
+                                        <div class="text-sm font-bold text-rose-400">${comp.totalDZDExpenses.toLocaleString()} DZD</div>
+                                        <div class="text-[10px] text-rose-500 font-semibold">(${comp.dzdExpensesEuroEquiv.toFixed(2)} €)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DZD Charges Table -->
+                        <div class="glass-card p-6 rounded-3xl space-y-4">
+                            <div class="flex justify-between items-center border-b border-slate-800/80 pb-3">
+                                <h3 class="text-sm font-bold tracking-wider text-emerald-400 uppercase flex items-center gap-2">
+                                    <i class="fa-solid fa-basket-shopping text-emerald-400"></i> Local DZD Expenses
+                                </h3>
+                                <button onclick="addDzdExp()" class="text-xs font-semibold bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/30 px-3 py-1.5 rounded-xl transition cursor-pointer">
+                                    + Add Expense
+                                </button>
+                            </div>
+                            <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                                ${dzdExpHtml || '<p class="text-xs text-slate-500 italic text-center py-4">No local expenses registered.</p>'}
+                            </div>
+                            <div class="flex justify-between items-center pt-3 border-t border-slate-800/80 text-xs font-bold">
+                                <span class="text-slate-400">Total Local Expenses</span>
+                                <span class="text-rose-400 text-sm">${comp.totalDZDExpenses.toLocaleString()} DZD</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+        }
+
+        // --- Data Mutators ---
+        function updateField(field, val) {
+            appState.months[appState.activeMonthId][field] = Number(val) || 0;
+            saveState();
+        }
+        function updateBill(idx, field, val) {
+            appState.months[appState.activeMonthId].euroBills[idx][field] = val;
+            saveState();
+        }
+        function addBill() {
+            appState.months[appState.activeMonthId].euroBills.push({ name: "New Sub", dueDate: "1/1/2026", amount: 10 });
+            saveState();
+        }
+        function removeBill(idx) {
+            appState.months[appState.activeMonthId].euroBills.splice(idx, 1);
+            saveState();
+        }
+        function updateDzdExp(idx, field, val) {
+            appState.months[appState.activeMonthId].dzdExpenses[idx][field] = val;
+            saveState();
+        }
+        function addDzdExp() {
+            appState.months[appState.activeMonthId].dzdExpenses.push({ name: "New Expense", amount: 5000 });
+            saveState();
+        }
+        function removeDzdExp(idx) {
+            appState.months[appState.activeMonthId].dzdExpenses.splice(idx, 1);
+            saveState();
+        }
+
+        // Initialize App
+        renderApp();
     </script>
 </body>
 </html>
