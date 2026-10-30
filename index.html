@@ -99,7 +99,6 @@
     </main>
 
     <script>
-        // Updated month sequence: Sep, Oct, Nov, Dec
         const MONTHS_CONFIG = [
             { id: 1, name: "September", short: "SEP" },
             { id: 2, name: "October", short: "OCT" },
@@ -159,20 +158,26 @@
         // Mathematical Formula Engine across Sep -> Oct -> Nov -> Dec
         function computeFinancials() {
             const computed = {};
-            let prevGrey = appState.months[1].initialGrey || 100;
-            let prevPaysera = appState.months[1].initialPaysera || 50;
-            let prevCCP = appState.months[1].initialCCP || 15000;
-            let prevCash = appState.months[1].initialCash || 5000;
 
             MONTHS_CONFIG.forEach((mConf, index) => {
                 const data = appState.months[mConf.id];
                 
-                if (index > 0) {
+                let prevGrey, prevPaysera, prevCCP, prevCash;
+
+                if (index === 0) {
+                    // For September (first month), use direct editable initial/prior values
+                    prevGrey = Number(data.initialGrey) || 0;
+                    prevPaysera = Number(data.initialPaysera) || 0;
+                    prevCCP = Number(data.initialCCP) || 0;
+                    prevCash = Number(data.initialCash) || 0;
+                } else {
+                    // For subsequent months (Oct, Nov, Dec), automatically chain from prior month's ending savings, 
+                    // OR allow user override if they explicitly typed an override value in data.initialX
                     const prevComp = computed[MONTHS_CONFIG[index-1].id];
-                    prevGrey = prevComp.nextGrey;
-                    prevPaysera = prevComp.nextPaysera;
-                    prevCCP = prevComp.cashLeftDZD;
-                    prevCash = 0;
+                    prevGrey = data.initialGrey !== undefined ? Number(data.initialGrey) : prevComp.nextGrey;
+                    prevPaysera = data.initialPaysera !== undefined ? Number(data.initialPaysera) : prevComp.nextPaysera;
+                    prevCCP = data.initialCCP !== undefined ? Number(data.initialCCP) : prevComp.cashLeftDZD;
+                    prevCash = data.initialCash !== undefined ? Number(data.initialCash) : 0;
                 }
 
                 // Euro Calculations
@@ -269,19 +274,31 @@
                 <!-- Top Metric Cards Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     
-                    <!-- Last Month Rollover Card -->
+                    <!-- Last Month Rollover Card (Editable Prior Values) -->
                     <div class="glass-card p-5 rounded-3xl relative overflow-hidden flex flex-col justify-between">
                         <div class="flex justify-between items-start">
-                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Rollover Liquidity</span>
-                            <span class="text-xs bg-slate-800 text-slate-300 font-bold px-2 py-0.5 rounded-md border border-slate-700">Prior</span>
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Prior / Rollover Liquidity</span>
+                            <span class="text-xs bg-sky-500/10 text-sky-400 font-bold px-2 py-0.5 rounded-md border border-sky-500/20">Editable</span>
                         </div>
-                        <div class="my-3 space-y-1.5">
-                            <div class="flex justify-between text-xs font-medium"><span class="text-slate-400">Grey Card</span><span class="text-sky-400 font-bold">€${comp.prevGrey.toFixed(2)}</span></div>
-                            <div class="flex justify-between text-xs font-medium"><span class="text-slate-400">Paysera</span><span class="text-violet-400 font-bold">€${comp.prevPaysera.toFixed(2)}</span></div>
-                            <div class="flex justify-between text-xs font-medium"><span class="text-slate-400">CCP Balance</span><span class="text-emerald-400 font-bold">${comp.prevCCP.toLocaleString()} DZD</span></div>
-                            <div class="flex justify-between text-xs font-medium"><span class="text-slate-400">Cash Balance</span><span class="text-amber-400 font-bold">${comp.prevCash.toLocaleString()} DZD</span></div>
+                        <div class="my-3 space-y-2">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-slate-400">Grey (€)</span>
+                                <input type="number" value="${comp.prevGrey.toFixed(2)}" onchange="updateInitialField('initialGrey', this.value)" class="w-24 input-sleek font-bold text-right text-xs rounded-lg px-2 py-1 text-sky-400">
+                            </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-slate-400">Paysera (€)</span>
+                                <input type="number" value="${comp.prevPaysera.toFixed(2)}" onchange="updateInitialField('initialPaysera', this.value)" class="w-24 input-sleek font-bold text-right text-xs rounded-lg px-2 py-1 text-violet-400">
+                            </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-slate-400">CCP (DZD)</span>
+                                <input type="number" value="${comp.prevCCP}" onchange="updateInitialField('initialCCP', this.value)" class="w-28 input-sleek font-bold text-right text-xs rounded-lg px-2 py-1 text-emerald-400">
+                            </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-slate-400">Cash (DZD)</span>
+                                <input type="number" value="${comp.prevCash}" onchange="updateInitialField('initialCash', this.value)" class="w-28 input-sleek font-bold text-right text-xs rounded-lg px-2 py-1 text-amber-400">
+                            </div>
                         </div>
-                        <p class="text-[10px] text-slate-500 italic">Automatically synced from prior month end</p>
+                        <p class="text-[10px] text-slate-500 italic">Modify to override starting balances for this month</p>
                     </div>
 
                     <!-- Net Euro Balance Card -->
@@ -427,7 +444,7 @@
                             </div>
                             <div class="flex justify-between items-center pt-3 border-t border-slate-800/80 text-xs font-bold">
                                 <span class="text-slate-400">Total Local Expenses</span>
-                                <span class="text-rose-400 text-sm">${comp.totalDZDExpenses.toLocaleString()} DZD</span>
+                                <span class="rose-400 text-sm">${comp.totalDZDExpenses.toLocaleString()} DZD</span>
                             </div>
                         </div>
 
@@ -442,6 +459,12 @@
             appState.months[appState.activeMonthId][field] = Number(val) || 0;
             saveState();
         }
+
+        function updateInitialField(field, val) {
+            appState.months[appState.activeMonthId][field] = Number(val) || 0;
+            saveState();
+        }
+
         function updateBill(idx, field, val) {
             appState.months[appState.activeMonthId].euroBills[idx][field] = val;
             saveState();
